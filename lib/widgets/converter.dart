@@ -8,6 +8,46 @@ class Converter extends StatefulWidget {
 }
 
 class _ConverterState extends State<Converter> {
+
+  String _binario = "";
+  String _decimal = "";
+  
+
+  void _writecero(){
+    setState(() {
+      _binario = _binario+"0";
+      _convertir(_binario);
+    });
+  }
+
+  void _writeuno(){
+    setState(() {
+      _binario = _binario+"1";
+      _convertir(_binario);
+    });
+  }
+
+  void _clear(){
+    setState(() {
+      _binario = "";
+      _decimal = "";
+    });
+  }
+  
+  void _convertir(String bin) {
+    int dv=0; 
+    int bv = int.parse(bin);
+    int ld;
+    int i = 1;
+    while(bv > 0){
+      ld = bv % 10; 
+      bv = (bv / 10).floor(); 
+      dv += ld * i; 
+      i = i * 2;
+    }
+    _decimal = dv.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +89,7 @@ class _ConverterState extends State<Converter> {
                           margin: const EdgeInsets.all(8.0),
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "Binario",
+                            '$_binario',
                             textAlign: TextAlign.end,
                             style: TextStyle(
                               fontSize: 50.0,
@@ -65,7 +105,7 @@ class _ConverterState extends State<Converter> {
                           margin: const EdgeInsets.all(8.0),
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            "Decimal",
+                            '$_decimal',
                             textAlign: TextAlign.end,
                             style: TextStyle(
                               fontSize: 50.0,
@@ -93,13 +133,23 @@ class _ConverterState extends State<Converter> {
                           padding: const EdgeInsets.all(8.0),
                           color: Colors.blue,
                           alignment: Alignment.center,
-                          child: Text(
-                            "0",
-                            style: new TextStyle(
-                              fontSize: 40.0,
-                              fontWeight: FontWeight.bold,
+                          child: SizedBox(
+                            height: double.infinity,
+                            width: double.infinity,
+                            child: RaisedButton(
+                              padding: const EdgeInsets.all(8.0),
+                              onPressed: _writecero,
+                              textColor: Colors.black,
+                              child: Text(
+                                "0",
+                                style: new TextStyle(
+                                  fontSize: 40.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              color: Colors.blue,
                             ),
-                          ),
+                          )
                         ),
                       ),
                       Expanded(
@@ -109,13 +159,23 @@ class _ConverterState extends State<Converter> {
                           padding: const EdgeInsets.all(8.0),
                           color: Colors.blue,
                           alignment: Alignment.center,
-                          child: Text(
-                            "1",
-                            style: new TextStyle(
-                              fontSize: 40.0,
-                              fontWeight: FontWeight.bold,
+                          child: SizedBox(
+                            height: double.infinity,
+                            width: double.infinity,
+                            child: RaisedButton(
+                              padding: const EdgeInsets.all(8.0),
+                              onPressed: _writeuno,
+                              textColor: Colors.black,
+                              child: Text(
+                                "1",
+                                style: new TextStyle(
+                                  fontSize: 40.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              color: Colors.blue,
                             ),
-                          ),
+                          )
                         ),
                       )
                     ],
@@ -132,7 +192,7 @@ class _ConverterState extends State<Converter> {
                     width: double.infinity,
                     child: RaisedButton(
                       padding: const EdgeInsets.all(8.0),
-                      onPressed: (){},
+                      onPressed: _clear,
                       textColor: Colors.white,
                       child: const Text(
                         "Clear",
