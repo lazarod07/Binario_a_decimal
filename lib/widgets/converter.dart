@@ -11,19 +11,35 @@ class _ConverterState extends State<Converter> {
 
   String _binario = "";
   String _decimal = "";
+  String cabeza = "Bin => Dec";
+  bool st = true;
   
 
-  void _writecero(){
+  void escribir(String n){
     setState(() {
-      _binario = _binario+"0";
-      _convertir(_binario);
+      if(n == "Clear"){
+        _clear();
+      }else{
+        _binario = _binario+n;
+        if(st == true){
+          _conver_bintodec(_binario);
+        }else{
+          _conver_dectobin(_binario);
+        }
+      }
     });
   }
 
-  void _writeuno(){
+  void sw(){
     setState(() {
-      _binario = _binario+"1";
-      _convertir(_binario);
+      if (st == false){
+        cabeza = "Bin => Dec";
+        st = true;
+      }else{
+        cabeza = "Dec => Bin";
+        st = false;
+      }
+      _clear();
     });
   }
 
@@ -34,7 +50,7 @@ class _ConverterState extends State<Converter> {
     });
   }
   
-  void _convertir(String bin) {
+  void _conver_bintodec(String bin) {
     int dv=0; 
     int bv = int.parse(bin);
     int ld;
@@ -48,77 +64,101 @@ class _ConverterState extends State<Converter> {
     _decimal = dv.toString();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: new AppBar(
-        title: new Text("Programacion Movil 2020"),
-      ),
-      body: new Center(
+
+
+
+void _conver_dectobin(String dec) {
+  int dv= int.parse(dec);
+  int bc = 0;
+  int i = 1;
+  while(dv > 0){
+    bc = bc + (dv % 2)*i;
+    dv = (dv/2).floor();
+    i = i * 10;
+  }
+  _decimal = bc.toString();
+}
+
+
+
+  Widget dectobin(){
+    return(
+      Expanded(
+        flex: 4,
         child: Container(
-          margin: const EdgeInsets.all(8.0),
-          alignment: Alignment.center,
-          child: new Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          child: Column(
             children: <Widget>[
               Expanded(
-                flex: 2,
+                flex: 3,
                 child: Container(
-                  alignment: Alignment.center,
-                  child: new Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                  child: Column(
                     children: <Widget>[
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          margin: const EdgeInsets.only(left: 8.0),
-                          child: new Text(
-                            "Binario -> Decimal",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          margin: const EdgeInsets.all(8.0),
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            '$_binario',
-                            textAlign: TextAlign.end,
-                            style: TextStyle(
-                              fontSize: 50.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          margin: const EdgeInsets.all(8.0),
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            '$_decimal',
-                            textAlign: TextAlign.end,
-                            style: TextStyle(
-                              fontSize: 50.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ),
-                      )
+                      treebtn("1","2","3"),
+                      treebtn("4","5","6"),
+                      treebtn("7","8","9"),
+                      onebtn("0"),
+                      onebtn("Clear")
                     ],
                   ),
-                )
+                ),
+              )
+            ],
+          ),
+        ),
+      )
+    );
+  }
+
+   Widget onebtn(String a){
+    return(
+      Expanded(
+        child: Container(
+          margin: const EdgeInsets.all(1.0),
+          padding: const EdgeInsets.all(1.0),
+          child: SizedBox(
+            height: double.infinity,
+            width: double.infinity,
+            child: RaisedButton(
+              onPressed: (){escribir("$a");},
+              textColor: Colors.black,
+              child: Text(
+                "$a",
+                style: new TextStyle(
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
+              color: Colors.blue,
+            ),
+          )
+        ),
+      )
+    );
+   }
+
+  Widget treebtn(String a, String b,String c, ){
+    return(
+      Expanded(
+        child: Container(
+          child: Row(
+            children: <Widget>[
+              onebtn(a),
+              onebtn(b),
+              onebtn(c),
+            ],
+          ),
+        ),
+      )
+    );
+  }
+
+  Widget bintodec(){
+    return(
+      Expanded(
+        flex: 4,
+        child: Container(
+          child: new Column(
+            children: <Widget>[
               Expanded(
                 flex: 3,
                 child: Container(
@@ -138,7 +178,7 @@ class _ConverterState extends State<Converter> {
                             width: double.infinity,
                             child: RaisedButton(
                               padding: const EdgeInsets.all(8.0),
-                              onPressed: _writecero,
+                              onPressed: (){escribir("0");},
                               textColor: Colors.black,
                               child: Text(
                                 "0",
@@ -164,7 +204,7 @@ class _ConverterState extends State<Converter> {
                             width: double.infinity,
                             child: RaisedButton(
                               padding: const EdgeInsets.all(8.0),
-                              onPressed: _writeuno,
+                              onPressed: (){escribir("1");},
                               textColor: Colors.black,
                               child: Text(
                                 "1",
@@ -206,6 +246,91 @@ class _ConverterState extends State<Converter> {
                   )
                 ),
               )
+            ],
+          )
+        ),
+      )
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: new AppBar(
+        title: new Text("Programacion Movil 2020"),
+      ),
+      body: new Center(
+        child: Container(
+          margin: const EdgeInsets.all(8.0),
+          alignment: Alignment.center,
+          child: new Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(
+                flex: 2,
+                child: Container(
+                  alignment: Alignment.center,
+                  child: new Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          margin: const EdgeInsets.only(left: 8.0),
+                          child: InkWell(
+                            onTap: (){
+                              sw();
+                            },
+                            child: new Text(
+                              "$cabeza",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            )
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          margin: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '$_binario',
+                            textAlign: TextAlign.end,
+                            style: TextStyle(
+                              fontSize: 50.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          margin: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '$_decimal',
+                            textAlign: TextAlign.end,
+                            style: TextStyle(
+                              fontSize: 50.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ),
+              if(st == true)bintodec()
+              else dectobin()
             ],
           )
         )
